@@ -9,6 +9,10 @@ import org.telegram.telegrambots.{ApiContextInitializer, TelegramBotsApi}
 
 import scala.util.{Failure, Success, Try}
 
+import java.text.SimpleDateFormat
+import java.util.{Timer, TimerTask}
+import java.time.Instant
+
 /**
   * Created by time2die on 05.01.17
   */
@@ -18,6 +22,23 @@ object Main {
     new TelegramBotsApi().registerBot(RussianBot)
   }
 }
+
+object TimerSchedule {
+    val day : Long = 24 * 60 * 60 * 1000;
+    val moment : Long = 10 * 60 * 60 * 1000;
+ 
+    val delay : Long = moment - Instant.now.getEpochSecond % day;
+    
+    if(time < 0) { time = time + day }
+ 
+    val timer: Timer = new Timer();
+    timer.scheduleAtFixedRate(new TimerTask() {
+      override def run(): Unit = {
+         new DebtsChecker(RussianBot).Check();
+      }
+    }, delay, day);
+  }
+} 
 
 object RussianBot extends RussianBot
 
